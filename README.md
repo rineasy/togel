@@ -1,70 +1,268 @@
-# Getting Started with Create React App
+# LAPAKTOTO - Deployment Guide
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This guide will help you deploy the LAPAKTOTO application on a VPS (Virtual Private Server).
 
-## Available Scripts
+## Prerequisites
 
-In the project directory, you can run:
+- A VPS running Ubuntu 20.04 or later
+- Domain name pointed to your VPS IP
+- SSH access to your VPS
+- Node.js 16+ installed
+- MongoDB 4.4+ installed
+- PM2 for process management
+- Nginx for reverse proxy
 
-### `npm start`
+## Installation Steps
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### 1. Initial Server Setup
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+# Update system packages
+sudo apt update && sudo apt upgrade -y
 
-### `npm test`
+# Install Node.js 16.x
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt install -y nodejs
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Install PM2 globally
+sudo npm install -y pm2@latest -g
 
-### `npm run build`
+# Install Nginx
+sudo apt install -y nginx
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+# Install MongoDB
+wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add -
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 2. Clone and Setup Application
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```bash
+# Create application directory
+mkdir -p /var/www/lapaktoto
+cd /var/www/lapaktoto
 
-### `npm run eject`
+# Clone repository (replace with your repository URL)
+git clone https://your-repository-url.git .
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+# Install dependencies
+npm install
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Build frontend
+cd frontend
+npm install
+npm run build
+cd ..
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Create environment file
+cp .env.example .env
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3. Configure Environment Variables
 
-## Learn More
+Edit the `.env` file:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```env
+NODE_ENV=production
+PORT=5000
+MONGODB_URI=mongodb://localhost:27017/prediksi
+# Add any other necessary environment variables
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4. Setup PM2
 
-### Code Splitting
+Create `ecosystem.config.js`:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```javascript
+module.exports = {
+  apps: [{
+    name: 'lapaktoto',
+    script: 'backend/server.js',
+    instances: 'max',
+    exec_mode: 'cluster',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 5000
+    }
+  }]
+};
+```
 
-### Analyzing the Bundle Size
+Start the application:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+```
 
-### Making a Progressive Web App
+### 5. Configure Nginx
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Create Nginx configuration:
 
-### Advanced Configuration
+```bash
+sudo nano /etc/nginx/sites-available/lapaktoto
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Add the following configuration:
 
-### Deployment
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com www.yourdomain.com;
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+    location / {
+        proxy_pass http://localhost:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
 
-### `npm run build` fails to minify
+    # Enable gzip compression
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Enable the site:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/lapaktoto /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+```
+
+### 6. Setup SSL with Certbot
+
+```bash
+# Install Certbot
+sudo apt install -y certbot python3-certbot-nginx
+
+# Get SSL certificate
+sudo certbot --nginx -d yourdomain.com -d www.yourdomain.com
+```
+
+### 7. MongoDB Backup Setup (Optional)
+
+Create a backup script:
+
+```bash
+mkdir /var/backups/mongodb
+nano /root/backup-mongo.sh
+```
+
+Add the following content:
+
+```bash
+#!/bin/bash
+DATE=$(date +"%Y%m%d")
+BACKUP_DIR="/var/backups/mongodb"
+
+# Create backup
+mongodump --out "$BACKUP_DIR/$DATE"
+
+# Keep only last 7 days of backups
+find $BACKUP_DIR/* -type d -mtime +7 -exec rm -rf {} +
+```
+
+Make it executable and add to crontab:
+
+```bash
+chmod +x /root/backup-mongo.sh
+crontab -e
+
+# Add this line to run backup daily at 3 AM
+0 3 * * * /root/backup-mongo.sh
+```
+
+## Maintenance
+
+### Updating the Application
+
+```bash
+cd /var/www/lapaktoto
+git pull
+npm install
+cd frontend
+npm install
+npm run build
+cd ..
+pm2 reload all
+```
+
+### Monitoring
+
+```bash
+# Monitor application logs
+pm2 logs
+
+# Monitor application status
+pm2 status
+
+# Monitor system resources
+htop
+
+# Monitor Nginx access logs
+sudo tail -f /var/log/nginx/access.log
+
+# Monitor Nginx error logs
+sudo tail -f /var/log/nginx/error.log
+```
+
+### Security Recommendations
+
+1. Enable UFW firewall:
+```bash
+sudo ufw allow ssh
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw enable
+```
+
+2. Configure fail2ban:
+```bash
+sudo apt install fail2ban
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+```
+
+3. Regular system updates:
+```bash
+sudo apt update && sudo apt upgrade -y
+```
+
+## Troubleshooting
+
+1. If the application isn't starting:
+   - Check PM2 logs: `pm2 logs`
+   - Verify environment variables: `cat .env`
+   - Check Node.js version: `node -v`
+
+2. If MongoDB isn't connecting:
+   - Check MongoDB status: `sudo systemctl status mongod`
+   - Verify MongoDB connection: `mongo`
+   - Check MongoDB logs: `sudo tail -f /var/log/mongodb/mongod.log`
+
+3. If Nginx isn't working:
+   - Check Nginx status: `sudo systemctl status nginx`
+   - Test Nginx configuration: `sudo nginx -t`
+   - Check Nginx logs: `sudo tail -f /var/log/nginx/error.log`
+
+## Support
+
+For additional support or questions, please contact:
+Telegram - @kitaoverdose
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

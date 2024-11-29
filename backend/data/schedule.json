@@ -1,0 +1,244 @@
+{
+    "schedules": [
+      {
+        "name": "sydney_lotto",
+        "realName": "Sydney Lotto",
+        "times": [
+          "14:00:40"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "sydney",
+        "realName": "Sydney",
+        "times": [
+          "13:52:07"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "cambodia",
+        "realName": "Cambodia Pools",
+        "times": [
+          "11:50:01"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "hongkong",
+        "realName": "Hongkong Pools",
+        "times": [
+          "23:00:13"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "hongkong_lotto",
+        "realName": "Hongkong Lotto",
+        "times": [
+          "23:00:49"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_00",
+        "realName": "Macau 0000",
+        "times": [
+          "00:01:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_13",
+        "realName": "Macau 1300",
+        "times": [
+          "15:10:20"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_16",
+        "realName": "Macau 1600",
+        "times": [
+          "16:09:03"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_19",
+        "realName": "Macau 1900",
+        "times": [
+          "19:10:20"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_22",
+        "realName": "Macau 2200",
+        "times": [
+          "22:10:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "macau_23",
+        "realName": "Macau 2300",
+        "times": [
+          "23:10:10"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "bulls_eye",
+        "realName": "Bullseye",
+        "times": [
+          "12:15:20"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "china",
+        "realName": "China Pools",
+        "times": [
+          "15:30:01"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "singapore",
+        "realName": "Singapore Pools",
+        "times": [
+          "17:50:04"
+        ],
+        "frequency": "Mon, Wed, Thu, Sat, Sun"
+      },
+      {
+        "name": "pcso",
+        "realName": "PCSO Pools",
+        "times": [
+          "20:15:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "taiwan",
+        "realName": "Taiwan Pools",
+        "times": [
+          "20:45:10"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "jakarta",
+        "realName": "Jakarta Pools",
+        "times": [
+          "23:34:01"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "toto_wuhan",
+        "realName": "Toto Wuhan",
+        "times": [
+          "00:04:08"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "hk_siang",
+        "realName": "Hongkong Siang",
+        "times": [
+          "11:00:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "kentucky_mid",
+        "realName": "Kentucky Mid",
+        "times": [
+          "00:30:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "virginia_day",
+        "realName": "Virginia Day",
+        "times": [
+          "01:00:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "newyork_mid",
+        "realName": "Newyork Mid",
+        "times": [
+          "01:30:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "carolina_day",
+        "realName": "Carolina Day",
+        "times": [
+          "02:00:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "oregon_03",
+        "realName": "Oregon 03",
+        "times": [
+          "03:00:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "oregon_06",
+        "realName": "Oregon 06",
+        "times": [
+          "06:00:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "florida_eve",
+        "realName": "Florida Eve",
+        "times": [
+          "08:50:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "california",
+        "realName": "California",
+        "times": [
+          "08:30:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "oregon_09",
+        "realName": "Oregon 09",
+        "times": [
+          "09:04:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "kentucky_eve",
+        "realName": "Kentucky Eve",
+        "times": [
+          "10:05:00"
+        ],
+        "frequency": "Daily"
+      },
+      {
+        "name": "malaysia",
+        "realName": "Malaysia",
+        "times": [
+          "19:00:00"
+        ],
+        "frequency": "Daily"
+      }
+    ]
+  }
