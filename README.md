@@ -64,13 +64,32 @@ cp .env.example .env
 
 ### 3. Configure Environment Variables
 
-Edit the `.env` file:
-
+#### Backend (.env)
 ```env
 NODE_ENV=production
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/prediksi
 # Add any other necessary environment variables
+```
+
+#### Frontend (.env)
+```env
+# Frontend port (development only)
+PORT=3000
+
+# API URL for production
+REACT_APP_API_URL=https://yourdomain.com/api
+
+# API URL for development
+# REACT_APP_API_URL=http://localhost:5000/api
+```
+
+Note: After changing environment variables, you need to rebuild the frontend:
+```bash
+cd frontend
+npm run build
+cd ..
+pm2 reload all
 ```
 
 ### 4. Setup PM2
